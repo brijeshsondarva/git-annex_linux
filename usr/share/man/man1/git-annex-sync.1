@@ -1,0 +1,177 @@
+.TH git-annex-sync 1
+.SH NAME
+git-annex-sync \- synchronize local repository with remotes
+.PP
+.SH SYNOPSIS
+git annex sync \fB[remote ...]\fP
+.PP
+.SH DESCRIPTION
+This command synchronizes the local repository with its remotes.
+.PP
+The sync process involves first committing any local changes to files
+that have previously been added to the repository,
+then fetching and merging the current branch and the \fBgit-annex\fP branch
+from the remote repositories, and finally pushing the changes back to
+those branches on the remote repositories. You can use standard git
+commands to do each of those steps by hand, or if you don't want to
+worry about the details, you can use sync.
+.PP
+The content of annexed objects is not synced by default, but the \-\-content
+option (see below) can make that also be synchronized.
+.PP
+When using git-annex, often remotes are not bare repositories, because
+it's helpful to add remotes for nearby machines that you want
+to access the same annexed content. Syncing with a non\-bare remote will
+not normally update the remote's current branch with changes from the local
+repository. (Unless the remote is configured with
+receive.denyCurrentBranch=updateInstead.)
+.PP
+To make working with such non\-bare remotes easier, sync pushes not only
+local \fBmaster\fP to remote \fBmaster\fP, but also to remote \fBsynced/master\fP (and
+similar with other branches). When \fBgit-annex sync\fP is later run on the
+remote, it will merge the \fBsynced/\fP branches that the repository has
+received.
+.PP
+Some special remotes contain a tree of files that can be imported
+and/or exported, and syncing with these remotes behaves differently.
+See  git-annex\-import(1) and git-annex\-export(1) for details
+about how importing and exporting work; syncing with such a remote 
+is essentially an import followed by an export. In many cases,
+importing needs to download content from the remote, and so sync will
+only import when the \-\-content option is used. (And exporting only
+ever happens when \-\-content is used.) The remote's 
+\fBremote.<name>.annex\-tracking\-branch\fP also must be configured, and
+have the same value as the currently checked out branch.
+.PP
+.SH OPTIONS
+.IP "\fB[remote]\fP"
+.IP
+By default, all remotes are synced, except for remotes that have
+\fBremote.<name>.annex\-sync\fP set to false. By specifying the names
+of remotes (or remote groups), you can control which ones to sync with.
+.IP
+.IP "\fB\-\-fast\fP"
+Only sync with the remotes with the lowest annex\-cost value configured.
+.IP
+When a list of remotes (or remote groups) is provided, it picks from
+amoung those, otherwise it picks from amoung all remotes.
+.IP
+.IP "\fB\-\-only\-annex\fP \fB\-a\fP, \fB\-\-not\-only\-annex\fP"
+Only sync the git-annex branch and annexed content with remotes,
+not other git branches.
+.IP
+This avoids pulling and pushing other branches, and it avoids committing
+any local changes. It's up to you to use regular git commands to do that.
+.IP
+The \fBannex.synconlyannex\fP configuration can be set to true to make
+this be the default behavior of \fBgit-annex sync\fP. To override such
+a setting, use \fB\-\-not\-only\-annex\fP.
+.IP
+When this is combined with \-\-no\-content, only the git-annex branch
+will be synced.
+.IP
+.IP "\fB\-\-commit\fP, \fB\-\-no\-commit\fP"
+A commit is done by default (unless \fBannex.autocommit\fP is set to false).
+.IP
+Use \-\-no\-commit to avoid committing local changes.
+.IP
+.IP "\fB\-\-message=msg\fP"
+Use this option to specify a commit message.
+.IP
+.IP "\fB\-\-pull\fP, \fB\-\-no\-pull\fP"
+By default, syncing pulls from remotes and imports from some special
+remotes. Use \-\-no\-pull to disable all pulling.
+.IP
+When \fBremote.<name>.annex\-pull\fP or \fBremote.<name>.annex\-sync\fP
+are set to false, pulling is disabled for those remotes, and using
+\fB\-\-pull\fP will not enable it.
+.IP
+.IP "\fB\-\-push\fP, \fB\-\-no\-push\fP "
+By default, syncing pushes changes to remotes and exports to some 
+special remotes. Use \-\-no\-push to disable all pushing.
+.IP
+When \fBremote.<name>.annex\-push\fP or \fBremote.<name>.annex\-sync\fP are
+set to false, or \fBremote.<name>.annex\-readonly\fP is set to true,
+pushing is disabled for those remotes, and using \fB\-\-push\fP will not enable
+it.
+.IP
+.IP "\fB\-\-content\fP, \fB\-\-no\-content\fP"
+Normally, syncing does not transfer the contents of annexed files.
+The \-\-content option causes the content of annexed files
+to also be uploaded and downloaded as necessary, to sync the content
+between the repository and its remotes.
+.IP
+The \fBannex.synccontent\fP configuration can be set to true to make content
+be synced by default.
+.IP
+Normally this tries to get each annexed file that is in the working tree
+and whose content the local repository does not yet have, from any remote
+that it's syncing with that has a copy, and then copies each file to
+every remote that it is syncing with. This behavior can be overridden by
+configuring the preferred content of repositories. See
+git-annex\-preferred\-content(1).
+.IP
+.IP "\fB\-\-content\-of=path\fP \fB\-C path\fP"
+While \-\-content operates on all annexed files,
+\-\-content\-of allows limiting the transferred files to ones in a given
+location.
+.IP
+This option can be repeated multiple times with different paths.
+.IP
+.IP "\fB\-\-all\fP \fB\-A\fP"
+This option, when combined with \fB\-\-content\fP, makes all available versions
+of all files be synced, when preferred content settings allow.
+.IP
+Note that preferred content settings that use \fBinclude=\fP or \fBexclude=\fP
+will only match the version of files currently in the work tree, but not
+past versions of files.
+.IP
+.IP "\fB\-\-jobs=N\fP \fB\-JN\fP"
+Enables parallel syncing with up to the specified number of jobs
+running at once. For example: \fB\-J10\fP
+.IP
+Setting this to "cpus" will run one job per CPU core.
+.IP
+When there are multiple git remotes, pushes will be made to them in
+parallel. Pulls are not done in parallel because that tends to be
+less efficient. When \-\-content is synced, the files are processed
+in parallel as well.
+.IP
+.IP "\fB\-\-allow\-unrelated\-histories\fP, \fB\-\-no\-allow\-unrelated\-histories\fP"
+Passed on to \fBgit merge\fP, to control whether or not to merge
+histories that do not share a common ancestor.
+.IP
+.IP "\fB\-\-resolvemerge\fP, \fB\-\-no\-resolvemerge\fP"
+By default, merge conflicts are automatically handled by sync. When two
+conflicting versions of a file have been committed, both will be added 
+to the tree, under different filenames. For example, file "foo" 
+would be replaced with "foo.variant\-A" and "foo.variant\-B". (See
+git-annex\-resolvemerge(1) for details.)
+.IP
+Use \fB\-\-no\-resolvemerge\fP to disable this automatic merge conflict
+resolution. It can also be disabled by setting \fBannex.resolvemerge\fP
+to false.
+.IP
+.IP "\fB\-\-cleanup\fP"
+Removes the local and remote \fBsynced/\fP branches, which were created
+and pushed by \fBgit-annex sync\fP.
+.IP
+This can come in handy when you've synced a change to remotes and now
+want to reset your master branch back before that change. So you
+run \fBgit reset\fP and force\-push the master branch to remotes, only
+to find that the next \fBgit annex merge\fP or \fBgit annex sync\fP brings the
+changes back. Why? Because the \fBsynced/master\fP branch is hanging
+around and still has the change in it. Cleaning up the \fBsynced/\fP branches
+prevents that problem.
+.IP
+.IP "Also the git-annex\-common\-options(1) can be used."
+.SH SEE ALSO
+git-annex(1)
+.PP
+git-annex\-preferred\-content(1)
+.PP
+.SH AUTHOR
+Joey Hess <id@joeyh.name>
+.PP
+.PP
+

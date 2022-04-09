@@ -1,0 +1,40 @@
+.TH git-annex-diffdriver 1
+.SH NAME
+git-annex-diffdriver \- external git diff driver shim
+.PP
+.SH SYNOPSIS
+git annex diffdriver \fB\-\- cmd \-\-opts \-\-\fP
+.PP
+.SH DESCRIPTION
+This is an external git diff driver shim. Normally, when using \fBgit diff\fP
+with an external diff driver, it will not see the contents of annexed
+files, since git passes to it the git-annex symlinks or pointer files.
+This command works around the problem, by running the 
+real external diff driver, and passing it the paths to the annexed content.
+.PP
+To use this, you will need to have installed some git external diff driver
+command. This is not the regular diff command; it takes a git\-specific
+input. See git's documentation of \fBGIT_EXTERNAL_DIFF\fP and
+gitattributes(5)'s documentation of external diff drivers.
+.PP
+Configure git to use "git-annex diffdriver \-\- cmd params \-\-"
+as the external diff driver, where cmd is the external diff
+driver you want it to run, and params are any extra parameters to pass
+to it. Note the trailing "\-\-", which is required.
+.PP
+For example, set \fBGIT_EXTERNAL_DIFF=git-annex diffdriver \-\- j\-c\-diff \-\-\fP
+.PP
+.SH OPTIONS
+Normally "\-\-" followed by the diff driver command, its options, 
+and another "\-\-"
+.PP
+Also the git-annex\-common\-options(1) can be used.
+.PP
+.SH SEE ALSO
+git-annex(1)
+.PP
+.SH AUTHOR
+Joey Hess <id@joeyh.name>
+.PP
+.PP
+

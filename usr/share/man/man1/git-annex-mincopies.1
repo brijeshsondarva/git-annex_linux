@@ -1,0 +1,43 @@
+.TH git-annex-mincopies 1
+.SH NAME
+git-annex-mincopies \- configure minimum number of copies
+.PP
+.SH SYNOPSIS
+git annex mincopies \fBN\fP
+.PP
+.SH DESCRIPTION
+Tells git-annex how many copies it is required to preserve of files, over all
+repositories. The default is 1.
+.PP
+Run without a number to get the current value.
+.PP
+This configuration is stored in the git-annex branch, so it will be seen
+by all clones of the repository. It can be overridden on a per\-file basis
+by the annex.mincopies setting in .gitattributes files, or can be
+overridden temporarily with the \-\-mincopies option.
+.PP
+This supplements the git-annex\-numcopies(1) setting. 
+In unusual situations, involving special remotes that do not support
+locking, and concurrent drops of the same content from multiple
+repositories, git-annex may violate the numcopies setting.
+In these unusual situations, git-annex ensures that the number of copies
+never goes below mincopies.
+.PP
+It is a good idea to not only rely on only setting mincopies. Set
+numcopies as well, to a larger number, and keep mincopies at the
+bare minimum you're comfortable with. Setting mincopies to a large
+number, rather than setting numcopies will in some cases prevent
+droping content in entirely safe situations.
+.PP
+.SH OPTIONS
+.IP "The git-annex\-common\-options(1) can be used."
+.IP
+.SH SEE ALSO
+git-annex(1)
+git-annex\-numcopies(1)
+.PP
+.SH AUTHOR
+Joey Hess <id@joeyh.name>
+.PP
+.PP
+

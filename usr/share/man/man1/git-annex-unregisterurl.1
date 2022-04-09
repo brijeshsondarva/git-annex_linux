@@ -1,0 +1,48 @@
+.TH git-annex-unregisterurl 1
+.SH NAME
+git-annex-unregisterurl \- unregisters an url for a key
+.PP
+.SH SYNOPSIS
+git annex unregisterurl \fB[key url]\fP
+.PP
+.SH DESCRIPTION
+This plumbing\-level command can be used to unregister urls when keys can
+no longer be downloaded from them.
+.PP
+Unregistering a key's last web url will make git-annex no longer treat content
+as being present in the web special remote.
+.PP
+Normally the key is a git-annex formatted key. However, if the key cannot be
+parsed as a key, and is a valid url, an URL key is constructed from the url.
+.PP
+.SH OPTIONS
+.IP "\fB\-\-batch\fP"
+.IP
+In batch input mode, lines are read from stdin, and each line
+should contain a key and url, separated by a single space.
+.IP
+.IP "\fB\-z\fP"
+When in batch mode, the input is delimited by nulls instead of the usual
+newlines.
+.IP
+.IP "\fB\-\-json\fP"
+Enable JSON output. This is intended to be parsed by programs that use
+git-annex. Each line of output is a JSON object.
+.IP
+.IP "\fB\-\-json\-error\-messages\fP"
+Messages that would normally be output to standard error are included in
+the json instead.
+.IP
+.IP "Also the git-annex\-common\-options(1) can be used."
+.SH SEE ALSO
+git-annex(1)
+.PP
+git-annex\-registerurl(1)
+.PP
+git-annex\-rmurl(1)
+.PP
+.SH AUTHOR
+Joey Hess <id@joeyh.name>
+.PP
+.PP
+

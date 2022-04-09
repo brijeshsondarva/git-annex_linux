@@ -1,0 +1,47 @@
+.TH git-annex-whereused 1
+.SH NAME
+git-annex-whereused \- find what files use or used a key
+.PP
+.SH SYNOPSIS
+git annex whereused \fB\-\-key=keyname|\-\-unused\fP
+.PP
+.SH DESCRIPTION
+Finds what files use or used a key.
+.PP
+For each file in the working tree that uses a key, this outputs one line,
+starting with the key, then a space, and then the name of the file.
+When multiple files use the same key, they will all be listed. When
+nothing is found that uses the key, there will be no output.
+.PP
+The default is to find only files in the current working tree that use a
+key. The \fB\-\-historical\fP option makes it also find past versions of files.
+.PP
+.SH OPTIONS
+.IP "\fB\-\-key=keyname\fP"
+.IP
+Operate on this key.
+.IP
+.IP "\fB\-\-unused\fP"
+Operate on keys found by last run of git-annex unused.
+.IP
+Usually these keys won't be used by any files in the current working
+tree, or any tags or branches. Combining this option with \fB\-\-historical\fP
+will find past uses of the keys.
+.IP
+.IP "\fB\-\-historical\fP"
+When no files in the current working tree use a key, this causes more
+work to be done, looking at past versions of the current branch, other
+branches, tags, and the reflog, to find somewhere that the key was used.
+It stops after finding one use of the key, and outputs a git rev that
+refers to where it was used, eg "HEAD@{40}:somefile"
+.IP
+.SH SEE ALSO
+git-annex(1)
+.PP
+git-annex\-unused(1)
+.PP
+.SH AUTHOR
+Joey Hess <id@joeyh.name>
+.PP
+.PP
+

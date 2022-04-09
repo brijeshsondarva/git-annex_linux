@@ -1,0 +1,81 @@
+.TH git-annex-matching-expression 1
+.SH NAME
+git-annex\-matching\-expression \- specifying a set of files
+.PP
+.SH DESCRIPTION
+The annex.largefiles and annex.addunlocked configurations both use
+expressions that match some files in the working tree.
+.PP
+.SH SYNTAX
+The format of these expressions is similar to
+git-annex\-preferred\-content(1) expressions.
+.PP
+For example:
+.PP
+ largerthan=100kb and not (include=*.c or include=*.h)
+.PP
+This matches large files, but excludes C source files.
+.PP
+The following terms can be used:
+.PP
+.IP "\fBinclude=glob\fP / \fBexclude=glob\fP"
+Specify files to include or exclude.
+.IP
+The glob can contain \fB*\fP and \fB?\fP to match arbitrary characters.
+.IP
+Note that this matches on the whole filename, relative to the top 
+of the git directory. So, \fBinclude=foo\fP will include a file \fBfoo\fP
+in the top, but not \fBsubdir/foo\fP. To include both, use 
+\fBinclude=foo or include=*/foo\fP
+.IP
+.IP "\fBsmallerthan=size\fP / \fBlargerthan=size\fP"
+Matches only files smaller than, or larger than the specified size.
+.IP
+The size can be specified with any commonly used units, for example,
+"0.5 gb" or "100 KiloBytes"
+.IP
+.IP "\fBmimetype=glob\fP"
+Looks up the MIME type of a file, and checks if the glob matches it.
+.IP
+For example, \fB"mimetype=text/*"\fP will match many varieties of text files,
+including "text/plain", but also "text/x\-shellscript", "text/x\-makefile",
+etc.
+.IP
+The MIME types are the same that are displayed by running \fBfile \-\-mime\-type\fP
+.IP
+This is only available to use when git-annex was built with the
+MagicMime build flag.
+.IP
+.IP "\fBmimeencoding=glob\fP"
+Looks up the MIME encoding of a file, and checks if the glob matches it.
+.IP
+For example, \fB"mimeencoding=binary"\fP will match many kinds of binary
+files.
+.IP
+The MIME encodings are the same that are displayed by running \fBfile \-\-mime\-encoding\fP
+.IP
+This is only available to use when git-annex was built with the
+MagicMime build flag.
+.IP
+.IP "\fBanything\fP"
+Matches any file.
+.IP
+.IP "\fBnothing\fP"
+Matches no files. (Same as "not anything")
+.IP
+.IP "\fBnot expression\fP"
+Inverts what the expression matches.
+.IP
+.IP "\fBand\fP / \fBor\fP / \fB( expression )\fP"
+These can be used to build up more complicated expressions.
+.IP
+.SH SEE ALSO
+git-annex(1)
+.PP
+.SH AUTHOR
+Joey Hess <id@joeyh.name>
+.PP
+<http://git-annex.branchable.com/>
+.PP
+.PP
+

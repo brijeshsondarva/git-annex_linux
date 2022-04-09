@@ -1,0 +1,56 @@
+.TH git-annex-log 1
+.SH NAME
+git-annex-log \- shows location log
+.PP
+.SH SYNOPSIS
+git annex log \fB[path ...]\fP
+.PP
+.SH DESCRIPTION
+Displays the location log for the specified file or files, showing each
+repository they were added to ("+") and removed from ("\-"). Note that the
+location log is for the particular file contents currently at these paths,
+not for any different content that was there in earlier commits.
+.PP
+This displays information from the history of the git-annex branch. Several
+things can prevent that information being available to display. When
+git-annex\-dead and git-annex\-forget are used, old historical
+data gets cleared from the branch. When annex.private or 
+remote.name.annex\-private is configured, git-annex does not write
+information to the branch at all. And when annex.alwayscommit is set to
+false, information may not have been committed to the branch yet.
+.PP
+.SH OPTIONS
+.IP "\fB\-\-since=date\fP, \fB\-\-after=date\fP, \fB\-\-until=date\fP, \fB\-\-before=date\fP, \fB\-\-max\-count=N\fP"
+.IP
+These options are passed through to \fBgit log\fP, and can be used to limit
+how far back to search for location log changes.
+.IP
+For example: \fB\-\-since "1 month ago"\fP
+.IP
+.IP "\fB\-\-raw\-date\fP"
+Rather than the normal display of a date in the local time zone,
+displays seconds since the unix epoch.
+.IP
+.IP "\fB\-\-gource\fP"
+Generates output suitable for the \fBgource\fP visualization program.
+.IP
+.IP "matching options"
+The git-annex\-matching\-options(1)
+can be used to control what to act on.
+.IP
+.IP "\fB\-\-all\fP \fB\-A\fP"
+Shows location log changes to all files, with the most recent changes first.
+In this mode, the names of files are not available and keys are displayed
+instead.
+.IP
+.IP "Also the git-annex\-common\-options(1) can be used."
+.SH SEE ALSO
+git-annex(1)
+.PP
+git-annex\-forget(1)
+.PP
+.SH AUTHOR
+Joey Hess <id@joeyh.name>
+.PP
+.PP
+
